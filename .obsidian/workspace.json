@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "JNCIP-SP/README.md",
                 "mode": "preview",
                 "source": true
               },
@@ -190,9 +190,9 @@
   },
   "active": "2afce9c14751ecfe",
   "lastOpenFiles": [
+    "README.md",
     "JNCIP-SP/JunosL2-VPNs/README.md",
     "JNCIP-SP/README.md",
-    "README.md",
     "Junos-MPLS-Fundamentals/notes/06-rsvp-traffic-engineering-database.md",
     "JNCIP-SP/JunosL2-VPNs/notes/images/004-data-plane-2-pe2-to-p2.png",
     "JNCIP-SP/JunosL2-VPNs/notes/images/007-ce3-ping-site4.png",
