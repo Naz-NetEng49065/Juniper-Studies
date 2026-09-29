@@ -79,11 +79,11 @@ This gives two deployment models:
 | **Multiple logical units** | The physical interface acts as a trunk. Each incoming VLAN tag identifies a different customer or remote site, and the PE maps the frame to the matching pseudowire. A single hub site can have its own virtual wire to many spoke sites. |
 
 ```
-                                +--- PW to Site 2 (VLAN 200) --- [PE-2] --- [Site 2]
-                                |
-  [Hub Site 1] --- [PE-1] ======+   (one physical trunk, one AC per VLAN)
-                                |
-                                +--- PW to Site 3 (VLAN 300) --- [PE-3] --- [Site 3]
+                        +-- PW (VLAN 200) -- [PE-2] -- [Site 2]
+                        |
+ [Hub Site 1] -- [PE-1]=+  one physical trunk, one AC per VLAN
+                        |
+                        +-- PW (VLAN 300) -- [PE-3] -- [Site 3]
 ```
 
 > [!NOTE]

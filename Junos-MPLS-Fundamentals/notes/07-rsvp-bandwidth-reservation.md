@@ -22,16 +22,17 @@
 By default, all LSPs try to take the metrically shortest path to their destination. If several high-bandwidth LSPs all use the same path, they can easily saturate the links and cause packet loss for everyone. That's frustrating when other, longer paths have plenty of spare capacity.
 
 ```
-        +--------+      +--------+      +--------+      +--------+      +--------+
-CE-A ---|   R1   |------|   R2   |------|   R3   |------|   R4   |------|   R5   |--- CE-B
-AS100   +--------+      +--------+      +--------+      +--------+      +--------+    AS150
-            |               |               |               |               |
-        +--------+      +--------+      +--------+      +--------+      +--------+
-        |   R6   |------|   R7   |------|   R8   |------|   R9   |------|   R10  |
-        +--------+      +--------+      +--------+      +--------+      +--------+
+       +----+   +----+   +----+   +----+   +-----+
+CE-A --| R1 |---| R2 |---| R3 |---| R4 |---| R5  |-- CE-B
+AS100  +----+   +----+   +----+   +----+   +-----+   AS150
+         |        |        |        |         |
+       +----+   +----+   +----+   +----+   +-----+
+       | R6 |---| R7 |---| R8 |---| R9 |---| R10 |
+       +----+   +----+   +----+   +----+   +-----+
 
-Problem: Two 600Mbps LSPs (R1->R5 and R6->R5) both want to use the top path,
-which only has 1000Mbps capacity. This will cause congestion.
+Problem: two 600 Mbps LSPs (R1->R5 and R6->R5) both want
+the top path, which only has 1000 Mbps of capacity.
+This will cause congestion.
 ```
 
 ### 1.2 The solution: bandwidth reservation

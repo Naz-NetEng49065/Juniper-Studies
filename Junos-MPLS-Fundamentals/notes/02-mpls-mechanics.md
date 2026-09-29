@@ -63,9 +63,9 @@ Each router tells its upstream neighbour: "to send me traffic for this destinati
 Within a single, **unidirectional** LSP, routers play specific roles. The roles are **per LSP**: one device can play different roles for different LSPs at the same time.
 
 ```
-[Site A] --- R1 (Ingress) --- R2 (Transit) --- R3 (Transit) --- R4 (Transit) --- R5 (Egress) --- [Site B]
-               |                                                                    |
-               +--------------------[ Label-Switched Path (LSP) ]-------------------+
+           Ingress   Transit   Transit   Transit   Egress
+[Site A] --- R1 ------ R2 ------ R3 ------ R4 ------ R5 --- [Site B]
+             |<----- Label-Switched Path (LSP) ----->|
 ```
 
 | Role | Also called | What it does | Example |

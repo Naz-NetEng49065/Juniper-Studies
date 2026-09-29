@@ -169,11 +169,11 @@ Node protection is a smarter, longer detour.
 **Key idea:** the backup path must be computed to avoid the whole downstream node (C). It runs from the PLR (B) to a router downstream of the failure (D), so the node failure can't affect it.
 
 ```
-                                                    [ Node C Failure ]
-       [R-A] ----------- [R-B] ----------- [R-C] ----------- [R-D] ----------- [R-E]
-                           |                   X               ^
-                           |                 Backup Path       |
-                           +-----------------------------------+
+                        [ Node C fails ]
+ [R-A] ----- [R-B] ----- [R-C] ----- [R-D] ----- [R-E]
+               |           X           ^
+               |      Backup path      |
+               +-----------------------+
 ```
 
 Because node protection also protects against failure of the link leading to that node, it's the more robust and usually preferred method.
