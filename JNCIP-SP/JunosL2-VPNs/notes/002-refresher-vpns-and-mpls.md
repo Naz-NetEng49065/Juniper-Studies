@@ -82,14 +82,10 @@ A label is simply a number (20 bits, so 0 to 1,048,575) that acts as an instruct
 In an MPLS network, routers have specific roles:
 
 ```
-  Customer                         Provider network                        Customer
- +--------+     +--------+     +-----+     +-----+     +-----+     +--------+     +--------+
- |  CE-1  |-----|  PE-1  |-----| P-1 |-----| P-2 |-----| P-3 |-----|  PE-2  |-----|  CE-2  |
- +--------+     +--------+     +-----+     +-----+     +-----+     +--------+     +--------+
-  Customer       Provider      Provider    Provider    Provider     Provider       Customer
-  Edge           Edge          (core)      (core)      (core)       Edge           Edge
-                 |<--- LSP starts                        LSP ends --->|
-                 |<-------------- BGP between PEs only -------------->|
+[CE-1] ---- [PE-1] ---- [P-1] ---- [P-2] ---- [P-3] ---- [PE-2] ---- [CE-2]		
+  |            |           |                               |           |		
+Customer     Provider    Provider                         Provider    Customer	
+Edge         Edge        (Core)                           Edge        Edge
 ```
 
 | Role | Description |
@@ -128,13 +124,19 @@ In an MPLS network, routers have specific roles:
 
 Let's trace a packet from a customer site, across the service provider core, to another customer site. This process involves three key actions on the MPLS label.
 
+```mermaid
+flowchart LR
+    A["Peer A"] -- "IP packet" --> PE1["PE-1<br/><b>PUSH</b><br/>ingress LER"]
+    PE1 -- "Label 123456" --> P1["P-1<br/><b>SWAP</b><br/>transit"]
+    P1 -- "Label 234567" --> P2["P-2<br/><b>POP</b><br/>penultimate hop"]
+    P2 -- "IP packet" --> PE2["PE-2<br/>egress LER"]
+    PE2 -- "IP packet" --> B["Peer B"]
+    style PE1 fill:#E3F2FD,stroke:#1E88E5,color:#000
+    style P1 fill:#FFF3E0,stroke:#FB8C00,color:#000
+    style P2 fill:#FCE4EC,stroke:#D81B60,color:#000
 ```
- [Peer A] --IP--> [PE-1] --L 123456--> [P-1] --L 234567--> [P-2] --IP--> [PE-2] --IP--> [Peer B]
-                   PUSH                 SWAP                 POP
-                (ingress LER)          (transit)      (penultimate hop)   (egress LER)
 
- PE-2 advertised label 3 (implicit null) for itself, which tells P-2 to pop.
-```
+PE-2 advertised **label 3 (implicit null)** for itself, which tells P-2 to pop.
 
 1. **PUSH:** an IP packet arrives at the ingress router, PE-1. PE-1 determines the packet needs to go to PE-2 through an LSP. It **pushes** the first MPLS label (for example `123456`) onto the packet and forwards it to the first P router, P-1.
 2. **SWAP:** P-1 receives the packet. It looks only at the label `123456`. Its table (`mpls.0` in Junos) says this label means "swap the label to `234567` and forward to P-2". It performs the swap and sends the packet on. This swap happens at every P router in the path, up to the penultimate hop.
@@ -166,20 +168,20 @@ However, this raises a question: if a PE router is connected to hundreds of diff
 MPLS VPNs use a stack of two labels, both to transport the packet across the core and to identify which VPN it belongs to.
 
 ```
-      Layer 3 VPN packet                         Layer 2 VPN packet
- +---------------------------------+      +---------------------------------+
- | Service provider L2 header      |      | Service provider L2 header      |
- +---------------------------------+      +---------------------------------+
- | Outer transport label           |      | Outer transport label           |  <-- Used by P routers.
- +---------------------------------+      +---------------------------------+      Changes hop by hop.
- | Inner VPN label (bottom, S=1)   |      | Inner VPN label (bottom, S=1)   |  <-- Used by egress PE.
- +---------------------------------+      +---------------------------------+      Identifies the customer
- | Customer IP header              |      | (Optional control word)         |      VRF / pseudowire.
- +---------------------------------+      +---------------------------------+
- | Customer TCP header             |      | Customer Ethernet frame         |
- +---------------------------------+      | (MAC header, VLAN tag, payload) |
- | Customer payload                |      +---------------------------------+
- +---------------------------------+
++---------------------------------+												
+| Service Provider Ethernet Header|												
++---------------------------------+												
+|      Outer Transport Label      |  <-- Used by P routers. Changes hop-by-hop.	
++---------------------------------+												
+|       Inner VPN Label           |  <-- Used by egress PE. Identifies the
+|                                 |      customer VRF.
++---------------------------------+												
+|      Customer IP Header         |												
++---------------------------------+												
+|      Customer TCP Header        |												
++---------------------------------+												
+|      Customer Payload           |												
++---------------------------------+
 ```
 
 - **Outer transport label:** the label we've already discussed. The P routers use it to get the packet from the ingress PE to the egress PE. It is swapped at every hop (and normally popped at the penultimate hop).
